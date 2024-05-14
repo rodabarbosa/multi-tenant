@@ -9,7 +9,7 @@ using MultiTenant.Domain.Entities.Business;
 namespace MultiTenant.Data;
 
 public class BusinessContext
-    : DbContext, IBusinessContext
+    : DbContext, IMultiTenantDbContext
 {
     private const string DefaultSchema = "public";
     private readonly string _connnectionString;
@@ -17,7 +17,7 @@ public class BusinessContext
     public BusinessContext(IConfiguration configuration, DbContextOptions<BusinessContext> options)
         : base(options)
     {
-        Schema = "dev";
+        Schema = DefaultSchema;
         _connnectionString = configuration.GetConnectionString("DefaultConnection")
                              ?? throw new Exception("Connection string not found");
     }
@@ -60,9 +60,8 @@ public class BusinessContext
 
         optionsBuilder
             .ReplaceService<IMigrationsAssembly, BusinessAssembly>()
-            .ReplaceService<IModelCacheKeyFactory, BusinessCacheKeyFactory>();
-
-        optionsBuilder.UseNpgsql(
+            .ReplaceService<IModelCacheKeyFactory, BusinessCacheKeyFactory>()
+            .UseNpgsql(
                 _connnectionString,
                 x => x.MigrationsHistoryTable("__EFMigrationsHistory", Schema)
                     .CommandTimeout(90)

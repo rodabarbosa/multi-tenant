@@ -33,4 +33,13 @@ public class TenantController : BaseController
             ? Created(Request.Path, result)
             : BadRequest(result);
     }
+
+    [HttpGet("/migrate")]
+    [ProducesResponseType(typeof(Response<bool>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> MigrateASync([FromServices] ITenantMigrateHandler handler, CancellationToken cancellationToken)
+    {
+        var response = await handler.ExecuteAsync(cancellationToken);
+
+        return Ok(response);
+    }
 }

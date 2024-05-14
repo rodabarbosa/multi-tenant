@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MultiTenant.Data;
+using MultiTenant.Domain.Interfaces;
 
 namespace MultiTenant.WebApi.Extensions;
 
@@ -69,5 +70,18 @@ static public class DataProviderExtension
             .Where(x => EF.Functions.ILike(x.Username, username))
             .Select(x => x.Tenant!.Schema)
             .FirstOrDefault();
+    }
+
+    public static WebApplication ApplyMigrations(this WebApplication app)
+    {
+        using IServiceScope scope = app.Services.CreateScope();
+        var coreContext = scope.ServiceProvider.GetRequiredService<CoreContext>();
+        coreContext.Database.Migrate();
+
+        var migrateHandler = scope.ServiceProvider.GetRequiredService<ITenantMigrateHandler>();
+        migrateHandler.ExecuteAsync(CancellationToken.None)
+            .Wait();
+
+        return app;
     }
 }

@@ -14,6 +14,7 @@ public static class ServiceProviderExtension
             .AddScoped<IAuthenticationHandler, AuthenticationHandler>()
             .AddScoped<ITenantPostHandler, TenantPostHandler>()
             .AddScoped<ITenantGetAllHandler, TenantGetAllHandler>()
+            .AddScoped<ITenantMigrateHandler, TenantMigrateHandler>()
             .AddScoped<IUserPostHandler, UserPostHandler>()
             .AddScoped<IUserGetAllHandler, UserGetAllHandler>()
             .AddScoped<IPersonGetAllHandler, PersonGetAllHandler>();

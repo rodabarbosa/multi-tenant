@@ -21,17 +21,17 @@ public class BusinessAssembly(
         if (string.IsNullOrEmpty(activeProvider))
             throw new ArgumentNullException(nameof(activeProvider));
 
-        bool isBusinessMigration = migrationClass.GetConstructor(new[] { typeof(IBusinessContext) }) != null;
-        if (!isBusinessMigration || _context is not IBusinessContext storeContext)
-            return base.CreateMigration(migrationClass, activeProvider);
-
-        var migration = (Migration?)Activator.CreateInstance(migrationClass.AsType(), storeContext);
-
-        if (migration != null)
+        var isBusinessMigration = migrationClass.GetConstructor(new[] { typeof(IMultiTenantDbContext) }) != null;
+        if (isBusinessMigration && _context is IMultiTenantDbContext multiTenantContext)
         {
-            migration.ActiveProvider = activeProvider;
+            var migration = (Migration?)Activator.CreateInstance(migrationClass.AsType(),
+                multiTenantContext);
 
-            return migration;
+            if (migration != null)
+            {
+                migration.ActiveProvider = activeProvider;
+                return migration;
+            }
         }
 
         return base.CreateMigration(migrationClass, activeProvider);

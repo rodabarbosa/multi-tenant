@@ -12,7 +12,7 @@ internal class BusinessCacheKey
     {
         _dbContextType = context.GetType();
         _designTime = designTime;
-        _schema = (context as IBusinessContext)?.Schema;
+        _schema = (context as IMultiTenantDbContext)?.Schema;
     }
 
     protected bool Equals(BusinessCacheKey other)

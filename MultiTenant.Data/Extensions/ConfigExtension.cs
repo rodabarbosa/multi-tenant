@@ -21,4 +21,12 @@ public static class ConfigExtension
 
         builder.Ignore(x => x.IsDeleted);
     }
+
+    public static void BusinessConfig<T>(this EntityTypeBuilder<T> builder)
+        where T : TEntity
+    {
+        builder.BaseConfig();
+
+        //builder.Metadata.SetIsTableExcludedFromMigrations(true);
+    }
 }

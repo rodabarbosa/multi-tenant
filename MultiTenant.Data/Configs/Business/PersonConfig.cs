@@ -10,7 +10,7 @@ public class PersonConfig : IEntityTypeConfiguration<Person>
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<Person> builder)
     {
-        builder.BaseConfig();
+        builder.BusinessConfig();
 
         builder.Property(e => e.Name)
             .HasMaxLength(250)
