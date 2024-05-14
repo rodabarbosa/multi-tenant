@@ -37,7 +37,7 @@ public sealed class UserPostHandler(
             };
 
             await context.Users
-                .AddAsync(new User(), cancellationToken);
+                .AddAsync(entity, cancellationToken);
 
             await context.SaveChangesAsync(cancellationToken);
 

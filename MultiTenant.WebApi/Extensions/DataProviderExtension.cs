@@ -29,17 +29,6 @@ static public class DataProviderExtension
                     .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTrackingWithIdentityResolution),
                 ServiceLifetime.Transient);
 
-        // builder.Services
-        //     .AddDbContextFactory<BusinessContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), options =>
-        //             {
-        //                 options.CommandTimeout(90);
-        //                 options.MigrationsHistoryTable("__EFMigrationsHistory", DefaultDevSchema);
-        //             })
-        //             .EnableDetailedErrors(enableSensitiveData)
-        //             .EnableSensitiveDataLogging(enableSensitiveData)
-        //             .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTrackingWithIdentityResolution),
-        //         ServiceLifetime.Transient);
-
         builder.Services
             .AddScoped<BusinessContext>(x =>
             {
@@ -52,9 +41,12 @@ static public class DataProviderExtension
 
                 var coreContext = x.GetService<CoreContext>() ?? throw new Exception("HQ database not set");
 
-                var schema = httpContext.HttpContext?.GetSchemaFromHeader(coreContext) ?? DefaultDevSchema;
+                var schema = httpContext.HttpContext?.GetSchemaFromHeader(coreContext);
 
-                return new BusinessContext(config, schema);
+                if (string.IsNullOrEmpty(schema) || !coreContext.Tenants.Any(y => EF.Functions.ILike(y.Schema, schema)))
+                    throw new ApplicationException("Tenant database not found");
+
+                return new BusinessContext(config, schema!);
             });
 
         return builder;

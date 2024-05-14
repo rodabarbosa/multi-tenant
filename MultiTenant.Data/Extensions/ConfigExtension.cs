@@ -10,6 +10,9 @@ public static class ConfigExtension
         where T : TEntity
     {
         builder.HasKey(e => e.Id);
+        builder.Property(x => x.Id)
+            .HasDefaultValueSql("gen_random_uuid()")
+            .ValueGeneratedOnAdd();
 
         builder.Property(x => x.CreatedAt)
             .HasDefaultValueSql("NOW()")
