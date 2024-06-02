@@ -17,6 +17,7 @@ static public class DataProviderExtension
     /// <param name="builder"></param>
     public static WebApplicationBuilder AddDatabase(this WebApplicationBuilder builder)
     {
+        // Requirido para extração de usuário logado
         builder.Services.AddHttpContextAccessor();
         var enableSensitiveData = true;
         //_ = bool.TryParse(builder.Configuration.GetSection("EnableSensitiveDataLogging")?.Value, out var enableSensitiveData);
@@ -39,7 +40,7 @@ static public class DataProviderExtension
 
                 var httpContext = x.GetService<IHttpContextAccessor>() ?? throw new Exception("HTTP context not accessible");
 
-                var coreContext = x.GetService<CoreContext>() ?? throw new Exception("HQ database not set");
+                var coreContext = x.GetService<CoreContext>() ?? throw new Exception("Core database not set");
 
                 var schema = httpContext.HttpContext?.GetSchemaFromHeader(coreContext);
 

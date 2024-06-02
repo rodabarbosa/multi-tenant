@@ -13,6 +13,8 @@ public class BusinessContext
 {
     private const string DefaultSchema = "public";
     private readonly string _connnectionString;
+    public string Schema { get; }
+    public DbSet<Person> People { get; set; } = default!;
 
     public BusinessContext(IConfiguration configuration, DbContextOptions<BusinessContext> options)
         : base(options)
@@ -35,9 +37,6 @@ public class BusinessContext
                              ?? throw new Exception("Connection string not found");
     }
 
-    public DbSet<Person> People { get; set; } = default!;
-    public string Schema { get; }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(Schema);
@@ -46,12 +45,6 @@ public class BusinessContext
             typeof(BusinessContext).Assembly,
             t => t.Namespace == typeof(PersonConfig).Namespace
         );
-
-        // modelBuilder.Entity<Person>(x =>
-        // {
-        //     x.Metadata.SetSchema(Schema);
-        //     x.Metadata.SetIsTableExcludedFromMigrations(true);
-        // });
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
